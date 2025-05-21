@@ -3,14 +3,16 @@ package juego;
 import java.awt.Image;
 import java.awt.Color;
 import entorno.Herramientas;
+import java.awt.Image;
 import entorno.Entorno;
+import entorno.Herramientas;
 import entorno.InterfaceJuego;
 
 public class Juego extends InterfaceJuego
 {
 	// El objeto Entorno que controla el tiempo y otros
 	private Entorno entorno;
-	private mago p1 ;
+	private mago p 1  
 	private Image fondo; // inicia la herramienta Image
 	// Variables y métodos propios de cada grupo
 	// ...
@@ -21,6 +23,7 @@ public class Juego extends InterfaceJuego
 		this.entorno = new Entorno(this, "Trabajo Practico: El camino de Gondolf", 1300, 800);
 		this.fondo = Herramientas.cargarImagen("cosas/fondo.png"); // Carga el fondo que esta en la carpeta "cosas"ProyectoLimpio
 		this.p1= new mago(100,100);
+		this.fondo = Herramientas.cargarImagen("cosas/fondo.png"); // Carga el fondo que esta en la carpeta "cosas"
 		// Inicializar lo que haga falta para el juego
 		// ...
 
