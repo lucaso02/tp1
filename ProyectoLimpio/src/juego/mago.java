@@ -1,24 +1,33 @@
 package juego;
 import java.awt.Image;
-
 import entorno.Entorno;
 import entorno.Herramientas;
+
  public class mago {
 	 public double x,y;
-	 Image imagen;
+	 private Image magoIzquierda;
+	 private Image magoDerecha;
+	 private Image magoActual;
 	 
 	 public mago(double x, double y) {
 		 this.x=x;
 		 this.y=y;
-		 this.imagen= Herramientas.cargarImagen("cosas/maguito.gif");
+		 this.magoIzquierda = Herramientas.cargarImagen("cosas/magoizquierda.gif");
+	     this.magoDerecha = Herramientas.cargarImagen("cosas/magoderecha.gif");
+	     this.magoActual = magoDerecha;
 	 }
 	
 	 public void dibujar(Entorno e) {
-			e.dibujarImagen(this.imagen, this.x, this.y, 0,0.4);
+			e.dibujarImagen(this.magoActual, this.x, this.y, 0,0.4);
 		}
 	 public void mover(int vertical,int horizontal) {
 			this.x += horizontal;
 			this.y += vertical;
+			if (horizontal < 0) {
+		            this.magoActual = magoIzquierda;
+		        } else if (horizontal > 0) {
+		            this.magoActual = magoDerecha;
+		        }
 			
 	   }
 }
