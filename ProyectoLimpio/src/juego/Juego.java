@@ -10,9 +10,9 @@ public class Juego extends InterfaceJuego
 	// El objeto Entorno que controla el tiempo y otros
 	private Entorno entorno;
 	private mago p1 ;
-	private murcielagos p2;
-
-
+	private murcielago p2;
+	private piedra[] piedras;
+	private Image panelHechizos;
 	private Image fondo; // inicia la herramienta Image
 	// Variables y métodos propios de cada grupo
 	// ...
@@ -20,13 +20,18 @@ public class Juego extends InterfaceJuego
 	Juego()
 	{
 		// Inicializa el objeto entorno
-		this.entorno = new Entorno(this, "Trabajo Practico: El camino de Gondolf", 1000, 900);
+		this.entorno = new Entorno(this, "Trabajo Practico: El camino de Gondolf", 1300, 800);
 		this.fondo = Herramientas.cargarImagen("cosas/fondo.jpeg"); // Carga el fondo que esta en la carpeta "cosas"ProyectoLimpio
+		this.panelHechizos = Herramientas.cargarImagen("cosas/panelhechizos.png");
 		this.p1= new mago(100,100);
-		this.p2= new murcielagos(100,600);    
+		this.p2= new murcielago(100,600); 
+		this.piedras = new piedra[4];
+        this.piedras[0] = new piedra(200, 200);
+        this.piedras[1] = new piedra(400, 500);
+        this.piedras[2] = new piedra(700, 300);
+        this.piedras[3] = new piedra(700, 600);
 		// Inicializar lo que haga falta para el juego
-		// ...
-
+        
 		// Inicia el juego!
 		this.entorno.iniciar();
 	}
@@ -39,6 +44,12 @@ public class Juego extends InterfaceJuego
 	 */
 	public void tick()
 	{   entorno.dibujarImagen(fondo, 500, 400, 0);
+		entorno.dibujarImagen(panelHechizos, 1120, 400, 0);
+		
+		for (piedra piedra : piedras) {
+		    piedra.dibujar(entorno);
+		    
+		}
 		p1.dibujar(entorno);
 		if (entorno.estaPresionada(entorno.TECLA_ARRIBA)) {
 		    if (p1.y > 20) {
@@ -63,8 +74,9 @@ public class Juego extends InterfaceJuego
 		}
 		this.p2.mover(p1.x, p1.y);
 		this.p2.dibujar(entorno);
+		
 	}
-	
+		
 
 	@SuppressWarnings("unused")
 	public static void main(String[] args)

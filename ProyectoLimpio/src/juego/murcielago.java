@@ -3,13 +3,13 @@ import java.awt.Image;
 import entorno.Entorno;
 import entorno.Herramientas;
 
-public class murcielagos {
-    private double x, y;
+public class murcielago {
+    public double x, y;
     private Image murcielagoIzquierda;
 	private Image murcielagoDerecha;
 	private Image murcielagoActual;
 
-     public murcielagos(double x, double y) {
+     public murcielago(double x, double y) {
         this.x = x;
         this.y = y;
         this.murcielagoIzquierda = Herramientas.cargarImagen("cosas/murcielagoizquierda.gif");

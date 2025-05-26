@@ -10,8 +10,8 @@ import entorno.Herramientas;
 	 private Image magoActual;
 	 
 	 public mago(double x, double y) {
-		 this.x=x;
-		 this.y=y;
+		 this.x=500;
+		 this.y=400;
 		 this.magoIzquierda = Herramientas.cargarImagen("cosas/magoizquierda.gif");
 	     this.magoDerecha = Herramientas.cargarImagen("cosas/magoderecha.gif");
 	     this.magoActual = magoDerecha;
