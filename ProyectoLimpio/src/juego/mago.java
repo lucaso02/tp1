@@ -5,6 +5,9 @@ import entorno.Herramientas;
 
  public class mago {
 	 public double x,y;
+	 double ancho, alto;
+	 double bordIz, bordDe, bordSu, bordIn;
+	 double escala;
 	 private Image magoIzquierda;
 	 private Image magoDerecha;
 	 private Image magoActual;
@@ -15,14 +18,23 @@ import entorno.Herramientas;
 		 this.magoIzquierda = Herramientas.cargarImagen("cosas/magoizquierda.gif");
 	     this.magoDerecha = Herramientas.cargarImagen("cosas/magoderecha.gif");
 	     this.magoActual = magoDerecha;
+	     this.escala = 0.4;
+	     this.alto = this.magoActual.getHeight(null) * this.escala;
+	     this.ancho = this.magoActual.getWidth(null) * this.escala;
+
+	     
 	 }
 	
 	 public void dibujar(Entorno e) {
-			e.dibujarImagen(this.magoActual, this.x, this.y, 0,0.4);
+			e.dibujarImagen(this.magoActual, this.x, this.y, 0,this.escala);
 		}
 	 public void mover(int vertical,int horizontal) {
 			this.x += horizontal;
 			this.y += vertical;
+			this.bordIn = y + this.alto /2;
+			this.bordSu = y - this.alto /4;
+			this.bordIz =x - this.ancho /4;
+			this.bordDe = x + this.ancho /4;
 			if (horizontal < 0) {
 		            this.magoActual = magoIzquierda;
 		        } else if (horizontal > 0) {

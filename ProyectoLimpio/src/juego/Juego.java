@@ -15,7 +15,12 @@ public class Juego extends InterfaceJuego
 	private Image panelHechizos;
 	private Image fondo; // inicia la herramienta Image
 	// Variables y métodos propios de cada grupo
-	// ...
+	double bordIz, bordDe, bordSu, bordIn;
+	boolean izq;
+	boolean aba;
+	boolean der;
+	boolean arr;
+	
 	
 	Juego()
 	{
@@ -26,11 +31,17 @@ public class Juego extends InterfaceJuego
 		this.p1= new mago(100,100);
 		this.p2= new murcielago(100,600); 
 		this.piedras = new piedra[4];
-        this.piedras[0] = new piedra(200, 200);
-        this.piedras[1] = new piedra(400, 500);
-        this.piedras[2] = new piedra(700, 300);
-        this.piedras[3] = new piedra(700, 600);
+        int[] coorY = {200, 500, 300, 600};
+        int[] coorX = {200, 400, 700, 700};
+        
 		// Inicializar lo que haga falta para el juego
+        for (int i =0; i < piedras.length; i ++ ) {
+        	this.piedras[i] = new piedra (coorX[i],coorY[i]);
+        }
+        this.izq = false;
+        this.arr = false;
+        this.der = false;
+        this.aba = false;
         
 		// Inicia el juego!
 		this.entorno.iniciar();
@@ -42,41 +53,62 @@ public class Juego extends InterfaceJuego
 	 * actualizar el estado interno del juego para simular el paso del tiempo 
 	 * (ver el enunciado del TP para mayor detalle).
 	 */
-	public void tick()
-	{   entorno.dibujarImagen(fondo, 500, 400, 0);
-		entorno.dibujarImagen(panelHechizos, 1120, 400, 0);
-		
-		for (piedra piedra : piedras) {
-		    piedra.dibujar(entorno);
-		    
-		}
-		p1.dibujar(entorno);
-		if (entorno.estaPresionada(entorno.TECLA_ARRIBA)) {
-		    if (p1.y > 20) {
-		        p1.mover(-1, 0);
-		    }
-		}
-		if (entorno.estaPresionada(entorno.TECLA_ABAJO)) {
-		    if (p1.y < 780) {
-		        p1.mover(1, 0);
-		    }
-		}
-		if (entorno.estaPresionada(entorno.TECLA_IZQUIERDA)) {
-		    if (p1.x > 20) {
-		        p1.mover(0, -1);
-		    }
-		}
-		if (entorno.estaPresionada(entorno.TECLA_DERECHA)) {
-		    if (p1.x < 1280) {
-		        p1.mover(0, 1);
-		    }
-		
-		}
-		this.p2.mover(p1.x, p1.y);
-		this.p2.dibujar(entorno);
-		
+	public void tick() {
+	    entorno.dibujarImagen(fondo, 500, 400, 0);
+	    entorno.dibujarImagen(panelHechizos, 1120, 400, 0);
+
+	    for (piedra piedra : piedras) {
+	        piedra.dibujar(entorno);
+	    }
+
+	    p1.dibujar(entorno);
+
+	    if (entorno.estaPresionada(entorno.TECLA_ARRIBA)) {
+	        p1.mover(-1, 0);
+	        if (hayColisionConPiedras(p1) || p1.y <= 20) {
+	            p1.mover(1, 0); // revierte
+	        }
+	    }
+
+	    if (entorno.estaPresionada(entorno.TECLA_ABAJO)) {
+	        p1.mover(1, 0);
+	        if (hayColisionConPiedras(p1) || p1.y >= 780) {
+	            p1.mover(-1, 0); // revierte
+	        }
+	    }
+
+	    if (entorno.estaPresionada(entorno.TECLA_IZQUIERDA)) {
+	        p1.mover(0, -1);
+	        if (hayColisionConPiedras(p1) || p1.x <= 20) {
+	            p1.mover(0, 1); // revierte
+	        }
+	    }
+
+	    if (entorno.estaPresionada(entorno.TECLA_DERECHA)) {
+	        p1.mover(0, 1);
+	        if (hayColisionConPiedras(p1) || p1.x >= 1280) {
+	            p1.mover(0, -1); // revierte
+	        }
+	    }
+
+	    p2.mover(p1.x, p1.y);
+	    p2.dibujar(entorno);
 	}
-		
+
+	
+		public boolean hayColisionConPiedras(mago m) {
+		    for (piedra p : piedras) {
+		        boolean colisionIzq = Math.abs(m.bordIz - p.bordDe) < 10 && m.bordSu < p.bordIn && m.bordIn > p.bordSu;
+		        boolean colisionDer = Math.abs(m.bordDe - p.bordIz) < 10 && m.bordSu < p.bordIn && m.bordIn > p.bordSu;
+		        boolean colisionAba = Math.abs(m.bordIn - p.bordSu) < 10 && m.bordDe > p.bordIz && m.bordIz < p.bordDe;
+		        boolean colisionArr = Math.abs(m.bordSu - p.bordIn) < 10 && m.bordDe > p.bordIz && m.bordIz < p.bordDe;
+
+		        if (colisionIzq || colisionDer || colisionAba || colisionArr) {
+		            return true;
+		        }
+		    }
+		    return false;
+		}
 
 	@SuppressWarnings("unused")
 	public static void main(String[] args)
