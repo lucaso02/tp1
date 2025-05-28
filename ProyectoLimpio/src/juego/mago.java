@@ -21,7 +21,7 @@ import entorno.Herramientas;
 	     this.escala = 0.4;
 	     this.alto = this.magoActual.getHeight(null) * this.escala;
 	     this.ancho = this.magoActual.getWidth(null) * this.escala;
-
+//aaaaaaaaaaaaaAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 	     
 	 }
 	

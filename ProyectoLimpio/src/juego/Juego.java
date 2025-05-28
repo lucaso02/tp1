@@ -95,7 +95,7 @@ public class Juego extends InterfaceJuego
 	    p2.dibujar(entorno);
 	}
 
-	
+	//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 		public boolean hayColisionConPiedras(mago m) {
 		    for (piedra p : piedras) {
 		        boolean colisionIzq = Math.abs(m.bordIz - p.bordDe) < 10 && m.bordSu < p.bordIn && m.bordIn > p.bordSu;

@@ -24,3 +24,4 @@ public class piedra {
         entorno.dibujarImagen(piedra, this.x, this.y, 0, 0.2);
     }
 	}
+ //HOL AHOLA COMO ESTAN
