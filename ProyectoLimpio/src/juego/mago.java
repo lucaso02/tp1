@@ -8,6 +8,7 @@ import entorno.Herramientas;
 	 double ancho, alto;
 	 double bordIz, bordDe, bordSu, bordIn;
 	 double escala;
+	 public int vida;
 	 private Image magoIzquierda;
 	 private Image magoDerecha;
 	 private Image magoActual;
@@ -19,6 +20,7 @@ import entorno.Herramientas;
 	     this.magoDerecha = Herramientas.cargarImagen("cosas/magoderecha.gif");
 	     this.magoActual = magoDerecha;
 	     this.escala = 0.4;
+	     this.vida = 100;
 	     this.alto = this.magoActual.getHeight(null) * this.escala;
 	     this.ancho = this.magoActual.getWidth(null) * this.escala;
 //aaaaaaaaaaaaaAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -32,7 +34,7 @@ import entorno.Herramientas;
 			this.x += horizontal;
 			this.y += vertical;
 			this.bordIn = y + this.alto /2;
-			this.bordSu = y - this.alto /4;
+			this.bordSu = y - this.alto /1.2;
 			this.bordIz =x - this.ancho /4;
 			this.bordDe = x + this.ancho /4;
 			if (horizontal < 0) {
