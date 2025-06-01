@@ -1,9 +1,14 @@
 package juego;
 
 import java.awt.Image;
+
+import javax.swing.ImageIcon;
+
 import entorno.Herramientas;
 import entorno.Entorno;
 import entorno.InterfaceJuego;
+
+
 
 public class Juego extends InterfaceJuego {
 	private Entorno entorno;
@@ -12,12 +17,28 @@ public class Juego extends InterfaceJuego {
 	private piedra[] piedras;
 	private Image panelHechizos;
 	private Image fondo;
+	
+	private Image crystalExplosion;
+	private Image fireball;
+	private Image silverLining;
+	
+	public static Image cargarImagen(String ruta, int ancho, int alto) {
+	    ImageIcon icon = new ImageIcon(Herramientas.class.getResource(ruta));
+	    Image img = icon.getImage();
+	    return img.getScaledInstance(ancho, alto, Image.SCALE_SMOOTH);
+	}
+	
 	double bordIz, bordDe, bordSu, bordIn;
 	boolean izq, aba, der, arr;
 	Juego() { //pepsilover4ever
 		this.entorno = new Entorno(this, "Trabajo Practico: El camino de Gondolf", 1300, 800);
 		this.fondo = Herramientas.cargarImagen("cosas/fondo.jpeg"); 
 		this.panelHechizos = Herramientas.cargarImagen("cosas/panelhechizos.png");
+	
+		this.crystalExplosion = cargarImagen("/cosas/crystalExplosion.gif", 300 ,210 );
+		this.fireball = cargarImagen("/cosas/fireball.gif", 250, 100);
+		this.silverLining = cargarImagen("/cosas/silverLining.gif", 250, 100);
+		
 		this.mago= new mago(100,100);
 		this.murcielagos = new murcielago[10];
 			for (int i = 0; i < murcielagos.length; i++) {
@@ -42,6 +63,11 @@ public class Juego extends InterfaceJuego {
 	    // --- Dibuja las piedras ---
 	    for (piedra piedra : piedras) {
 	        piedra.dibujar(entorno);}
+	    
+	    entorno.dibujarImagen(crystalExplosion, 1120, 200, 0);
+	    entorno.dibujarImagen(fireball, 1120, 400, 0);
+	    entorno.dibujarImagen(silverLining, 1120, 600, 0);
+	    
 	    // --- Dibuja al mago ---
 	    mago.dibujar(entorno);
 	    // --- Movimiento del mago ---
