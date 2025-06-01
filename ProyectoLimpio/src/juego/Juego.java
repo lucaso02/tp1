@@ -13,9 +13,8 @@ public class Juego extends InterfaceJuego {
 	private Image panelHechizos;
 	private Image fondo;
 	double bordIz, bordDe, bordSu, bordIn;
-	boolean izq; boolean aba; boolean der; boolean arr;
-	
-	Juego() { //cocalover4ever
+	boolean izq, aba, der, arr;
+	Juego() { //pepsilover4ever
 		this.entorno = new Entorno(this, "Trabajo Practico: El camino de Gondolf", 1300, 800);
 		this.fondo = Herramientas.cargarImagen("cosas/fondo.jpeg"); 
 		this.panelHechizos = Herramientas.cargarImagen("cosas/panelhechizos.png");
