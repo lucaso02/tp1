@@ -22,6 +22,18 @@ public class Juego extends InterfaceJuego {
 	private Image fireball;
 	private Image silverLining;
 	
+	private Hechizo hechizoCrystalExplosion;
+	private Hechizo hechizoFireball;
+	private Hechizo hechizoSilverLining;
+
+	private Image gifFireball, gifCrystalExplosion, gifSilverLining;
+	private String hechizoActivo = null;
+	private int ticksHechizo = 0;
+	
+	private String hechizoSeleccionado = null;
+	private int energiaMagica = 100; // Podés ajustar este número
+	
+	
 	public static Image cargarImagen(String ruta, int ancho, int alto) {
 	    ImageIcon icon = new ImageIcon(Herramientas.class.getResource(ruta));
 	    Image img = icon.getImage();
@@ -38,6 +50,14 @@ public class Juego extends InterfaceJuego {
 		this.crystalExplosion = cargarImagen("/cosas/crystalExplosion.png", 300 ,210 );
 		this.fireball = cargarImagen("/cosas/fireball.png", 250, 100);
 		this.silverLining = cargarImagen("/cosas/silverLining.png", 250, 100);
+		
+		this.hechizoCrystalExplosion = new Hechizo("Crystal Explosion", 30, 100);
+		this.hechizoFireball = new Hechizo("Fireball", 50, 150);
+		this.hechizoSilverLining = new Hechizo("Silver Lining", 0, 60); // Este tiene costo 0
+		
+		this.gifFireball = Herramientas.cargarImagen("cosas/fireball.gif");
+		this.gifCrystalExplosion = Herramientas.cargarImagen("cosas/crystalExplosion.gif");
+		this.gifSilverLining = Herramientas.cargarImagen("cosas/silverLining.gif");
 		
 		this.mago= new mago(100,100);
 		this.murcielagos = new murcielago[10];
@@ -70,6 +90,29 @@ public class Juego extends InterfaceJuego {
 	    
 	    // --- Dibuja al mago ---
 	    mago.dibujar(entorno);
+	    
+	 // Dibujar animación del hechizo si está activo
+	    if (ticksHechizo > 0 && hechizoActivo != null) {
+	        Image imagen = null;
+
+	        if (hechizoActivo.equals("crystalExplosion")) {
+	            imagen = crystalExplosion;
+	        } else if (hechizoActivo.equals("fireball")) {
+	            imagen = fireball;
+	        } else if (hechizoActivo.equals("silverLining")) {
+	            imagen = silverLining;
+	        }
+
+	        if (imagen != null) {
+	            entorno.dibujarImagen(imagen, mago.x, mago.y, 0);
+	        }
+
+	        ticksHechizo--;
+	        if (ticksHechizo == 0) {
+	            hechizoActivo = null;
+	        }
+	    }
+	    
 	    // --- Movimiento del mago ---
 	    if (entorno.estaPresionada(entorno.TECLA_ARRIBA) || entorno.estaPresionada('w')) {
 	        mago.mover(-1, 0);
@@ -90,6 +133,38 @@ public class Juego extends InterfaceJuego {
 	        mago.mover(0, 1);
 	        if (hayColisionConPiedras(mago) || mago.x >= 900) {
 	            mago.mover(0, -1); }}
+	 // Selección de hechizo
+	    if (entorno.sePresiono('1')) {
+	        hechizoSeleccionado = "crystalExplosion";
+	    }
+	    if (entorno.sePresiono('2')) {
+	        hechizoSeleccionado = "fireball";
+	    }
+	    if (entorno.sePresiono('3')) {
+	        hechizoSeleccionado = "silverLining";
+	    }
+	    if (entorno.estaPresionada(entorno.TECLA_ESPACIO) && hechizoSeleccionado != null) {
+	        Hechizo hechizo = null;
+
+	        if (hechizoSeleccionado.equals("crystalExplosion")) {
+	            hechizo = hechizoCrystalExplosion;
+	        } else if (hechizoSeleccionado.equals("fireball")) {
+	            hechizo = hechizoFireball;
+	        } else if (hechizoSeleccionado.equals("silverLining")) {
+	            hechizo = hechizoSilverLining;
+	        }
+
+	        if (hechizo != null && energiaMagica >= hechizo.costoEnergia) {
+	            energiaMagica -= hechizo.costoEnergia;
+
+	            // Activar animación
+	            hechizoActivo = hechizoSeleccionado;
+	            ticksHechizo = 30; // Mostrar animación por 30 ticks (~0.5 segundos)
+
+	            System.out.println("Lanzaste " + hechizo.nombre);
+	            hechizoSeleccionado = null;
+	        }
+	    }
 	    // --- Muestra la vida del mago ---
 	    entorno.cambiarFont("Arial", 24, java.awt.Color.RED);
 	    entorno.escribirTexto("Vida: " + mago.vida, 50, 50);
@@ -105,7 +180,28 @@ public class Juego extends InterfaceJuego {
 	            
 	    if (MurcielagoTocaMago(mago, m)) {
 	        mago.vida -= 10;
-	        murcielagos[i] = null; }}}}
+	        murcielagos[i] = null;
+	        if (ticksHechizo > 0 && hechizoActivo != null) {
+	            Image animacion = null;
+
+	            if (hechizoActivo.equals("fireball")) {
+	                animacion = gifFireball;
+	            } else if (hechizoActivo.equals("crystalExplosion")) {
+	                animacion = gifCrystalExplosion;
+	            } else if (hechizoActivo.equals("silverLining")) {
+	                animacion = gifSilverLining;
+	            }
+
+	            if (animacion != null) {
+	                entorno.dibujarImagen(animacion, mago.x + 60, mago.y, 0);
+	            }
+
+	            ticksHechizo--;
+	            if (ticksHechizo == 0) {
+	                hechizoActivo = null;
+	            }
+	        }    
+	    }}}}
 	
 	//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 		public boolean hayColisionConPiedras(mago m) {
