@@ -35,9 +35,9 @@ public class Juego extends InterfaceJuego {
 		this.fondo = Herramientas.cargarImagen("cosas/fondo.jpeg"); 
 		this.panelHechizos = Herramientas.cargarImagen("cosas/panelhechizos.png");
 	
-		this.crystalExplosion = cargarImagen("/cosas/crystalExplosion.gif", 300 ,210 );
-		this.fireball = cargarImagen("/cosas/fireball.gif", 250, 100);
-		this.silverLining = cargarImagen("/cosas/silverLining.gif", 250, 100);
+		this.crystalExplosion = cargarImagen("/cosas/crystalExplosion.png", 300 ,210 );
+		this.fireball = cargarImagen("/cosas/fireball.png", 250, 100);
+		this.silverLining = cargarImagen("/cosas/silverLining.png", 250, 100);
 		
 		this.mago= new mago(100,100);
 		this.murcielagos = new murcielago[10];
