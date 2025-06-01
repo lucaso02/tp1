@@ -96,11 +96,11 @@ public class Juego extends InterfaceJuego {
 	        Image imagen = null;
 
 	        if (hechizoActivo.equals("crystalExplosion")) {
-	            imagen = crystalExplosion;
+	            imagen = gifCrystalExplosion;
 	        } else if (hechizoActivo.equals("fireball")) {
-	            imagen = fireball;
+	            imagen = gifFireball;
 	        } else if (hechizoActivo.equals("silverLining")) {
-	            imagen = silverLining;
+	            imagen = gifSilverLining;
 	        }
 
 	        if (imagen != null) {
