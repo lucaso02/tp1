@@ -21,6 +21,10 @@ public class Juego extends InterfaceJuego {
 	private Image fireball;
 	private Image silverLining;
 
+	private Image crystalExplosionRojo;
+	private Image fireballRojo;
+	private Image silverLiningRojo;
+
 	private Hechizo hechizoCrystalExplosion;
 	private Hechizo hechizoFireball;
 	private Hechizo hechizoSilverLining;
@@ -50,6 +54,11 @@ public class Juego extends InterfaceJuego {
 		this.crystalExplosion = cargarImagen("/cosas/crystalExplosion.png", 300, 210);
 		this.fireball = cargarImagen("/cosas/fireball.png", 250, 100);
 		this.silverLining = cargarImagen("/cosas/silverLining.png", 250, 100);
+
+		//Rojo!!
+		this.crystalExplosionRojo = cargarImagen("/cosas/crystalExplosionRojo.png", 250, 100);
+		this.fireballRojo = cargarImagen("/cosas/fireballRojo.png", 250, 100);
+		this.silverLiningRojo = cargarImagen("/cosas/silverLiningRojo.png", 250, 120);
 
 		this.hechizoCrystalExplosion = new Hechizo("Crystal Explosion", 30, 100);
 		this.hechizoFireball = new Hechizo("Fireball", 50, 150);
@@ -93,9 +102,10 @@ public class Juego extends InterfaceJuego {
 			piedra.dibujar(entorno);
 		}
 
-		entorno.dibujarImagen(crystalExplosion, 1120, 200, 0);
-		entorno.dibujarImagen(fireball, 1120, 400, 0);
-		entorno.dibujarImagen(silverLining, 1120, 600, 0);
+		// Si está seleccionado, mostrar la versión "Roja"
+		entorno.dibujarImagen("crystalExplosion".equals(hechizoaLanzar) ? crystalExplosionRojo : crystalExplosion, 1120, 200, 0);
+		entorno.dibujarImagen("fireball".equals(hechizoaLanzar) ? fireballRojo : fireball, 1120, 400, 0);
+		entorno.dibujarImagen("silverLining".equals(hechizoaLanzar) ? silverLiningRojo : silverLining, 1120, 600, 0);
 
 		// --- Dibuja al mago ---
 		mago.dibujar(entorno);
