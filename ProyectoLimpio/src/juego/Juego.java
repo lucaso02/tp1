@@ -104,6 +104,7 @@ public class Juego extends InterfaceJuego {
 			if (estaEnGameOver) {
 			    entorno.dibujarImagen(imagenGameOver, 650, 400, 0);
 
+			    //salir del estado d gameOver
 			    Point pos = entorno.getMousePosition();
 			    if (entorno.sePresionoBoton(1) && pos != null) {
 			        int x = pos.x;
@@ -118,20 +119,24 @@ public class Juego extends InterfaceJuego {
 			}
 			if (mago == null)
 				return;
+			
 			for (piedra piedra : piedras) {
 				piedra.dibujar(entorno);
 			}
+			//dibuja las pociones 
 			for (int i = 0; i < pociones.length; i++) {
 			    if (pociones[i] != null && pociones[i].activa) {
 			        pociones[i].dibujar(entorno);
 			    }
 			}
+			//Dibuja los botones originales// boton rojo al estar seleccionado
 			entorno.dibujarImagen("crystalExplosion".equals(hechizoaLanzar) ? crystalExplosionRojo : crystalExplosion, 1120, 250, 0);
 			entorno.dibujarImagen("fireball".equals(hechizoaLanzar) ? fireballRojo : fireball, 1120, 350, 0);
 			entorno.dibujarImagen("silverLining".equals(hechizoaLanzar) ? silverLiningRojo : silverLining, 1120, 450, 0);
 			entorno.dibujarImagen(hechizos, 1120, 100, 0);
 			mago.dibujar(entorno);
 
+			//dibuja el hechizo correspondiente al boton seleccionado 
 			if (ticksHechizo > 0 && hechizoActivo != null) {
 				Image imagen = null;
 				if ("crystalExplosion".equals(hechizoActivo)) {
@@ -141,21 +146,21 @@ public class Juego extends InterfaceJuego {
 				} else if ("silverLining".equals(hechizoActivo)) {
 					imagen = gifSilverLining;
 				}
-
+			// escala(tamaño) de los hechizos 
 				if (imagen != null && posLanzamiento != null) {
 				    double escala = hechizoActivo.equals("crystalExplosion") ? 0.3 :
 				                    hechizoActivo.equals("fireball") ? 0.7 :
 				                    hechizoActivo.equals("silverLining") ? 5.0 : 1.0;
 				    entorno.dibujarImagen(imagen, posLanzamiento.x, posLanzamiento.y, 0, escala);
 				}
-
+				//duracion del hechizo en pantalla
 				ticksHechizo--;
 				if (ticksHechizo == 0) {
 					posLanzamiento = null;
 					hechizoActivo = null;
 				}
 			}
-			
+			// hechizo activo, rango, daño
 			if (ticksHechizo == 1 && posLanzamiento != null && hechizoActivo != null) {
 			    Hechizo hechizo = null;
 			    if ("crystalExplosion".equals(hechizoActivo)) {
@@ -199,7 +204,7 @@ public class Juego extends InterfaceJuego {
 			        }
 			    }
 			}
-			
+			//movimientos del mago
 			if (entorno.estaPresionada(entorno.TECLA_ARRIBA) || entorno.estaPresionada('w')) {
 				mago.mover(-1, 0);
 				if (hayColisionConPiedras(mago) || mago.y <= 40)
@@ -220,6 +225,7 @@ public class Juego extends InterfaceJuego {
 				if (hayColisionConPiedras(mago) || mago.x >= 910)
 					mago.mover(0, -1);
 			}
+			// + energia x pociones 
 			for (int i = 0; i < pociones.length; i++) {
 			    if (pociones[i] != null && pociones[i].activa) {
 			        if (pociones[i].recoger(mago.x, mago.y)) {
@@ -230,8 +236,8 @@ public class Juego extends InterfaceJuego {
 			        }
 			    }
 			}
-			
-			if (entorno.sePresionoBoton(1)) {
+			//lanzar el hechizo cn el mouse
+			if (entorno.sePresionoBoton(1)) { // se activa cuando haces click izq
 				Point pos = entorno.getMousePosition();
 				if (pos != null) {
 					int xClick = pos.x;
@@ -269,7 +275,7 @@ public class Juego extends InterfaceJuego {
 					}
 				}
 			}
-					
+			//parte inferior de la botonera
 			entorno.dibujarImagen(corazon, 1020, 555, 0);
 			entorno.cambiarFont("Palatino Linotype", 44, java.awt.Color.RED);
 			entorno.escribirTexto(mago.vida + "", 1070, 570);
@@ -285,7 +291,7 @@ public class Juego extends InterfaceJuego {
 			    estaEnGameOver = true;
 			    return;
 			}
-			
+			//murcielagos eliminados hechizo
 			if (murcielagosEliminados >= 50) {
 			    entorno.dibujarImagen(imagenWinner, 650, 400, 0);
 			    Point pos = entorno.getMousePosition();
@@ -298,6 +304,7 @@ public class Juego extends InterfaceJuego {
 			    }
 			    return;
 			}
+			//murcielagos quitan vida //murcielago desaparecer
 			for (int i = 0; i < murcielagos.length; i++) {
 				murcielago m = murcielagos[i];
 				if (m != null) {
@@ -326,6 +333,7 @@ public class Juego extends InterfaceJuego {
 			    }
 			}
 		}
+		//boton de las imagenes de los hechizos (dnd responde el click)
 		private String seleccionDeHechizo(int x, int y) {
 			int botonX = 995;
 			int botonAncho = 250;
@@ -339,6 +347,7 @@ public class Juego extends InterfaceJuego {
 			}
 			return null;
 		}
+		//colisiones mago cn el margen de piedra
 		public boolean hayColisionConPiedras(mago m) {
 			for (piedra p : piedras) {
 				boolean colisionIzq = Math.abs(m.bordIz - p.bordDe) < 10 && m.bordSu < p.bordIn && m.bordIn > p.bordSu;
@@ -352,10 +361,12 @@ public class Juego extends InterfaceJuego {
 			}
 			return false;
 		}
+		//colision entre mago y murcielago
 		private boolean MurcielagoTocaMago(mago mago, murcielago murcielago) {
 			double distancia = Math.sqrt(Math.pow(mago.x - murcielago.x, 2) + Math.pow(mago.y - murcielago.y, 2));
 			return distancia < 40;
 		}
+		//crea murcielago aleatoriamente en cualquier borde
 		private murcielago crearMurcielagoEnBorde() {
 		    double x = 0, y = 0;
 		    int lado = (int)(Math.random() * 4);
@@ -380,6 +391,7 @@ public class Juego extends InterfaceJuego {
 		    }
 		    return new murcielago(x, y);
 		}
+		//probabilidad pociones 
 		private void agregarPocion(double x, double y) {
 		     if (Math.random() < 0.5) {
 		        for (int i = 0; i < pociones.length; i++) {
