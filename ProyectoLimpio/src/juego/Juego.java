@@ -16,7 +16,8 @@ public class Juego extends InterfaceJuego {
 	private piedra[] piedras;
 	private Image panelHechizos;
 	private Image fondo;
-
+	private Image imagenGameOver;
+	private boolean estaEnGameOver = false;
 	private Image crystalExplosion;
 	private Image fireball;
 	private Image silverLining;
@@ -50,7 +51,7 @@ public class Juego extends InterfaceJuego {
 		this.entorno = new Entorno(this, "Trabajo Practico: El camino de Gondolf", 1300, 800);
 		this.fondo = Herramientas.cargarImagen("cosas/fondo.jpeg");
 		this.panelHechizos = Herramientas.cargarImagen("cosas/panelhechizos.png");
-
+		this.imagenGameOver = Herramientas.cargarImagen("cosas/gameover.png");
 		this.crystalExplosion = cargarImagen("/cosas/crystalExplosion.png", 300, 210);
 		this.fireball = cargarImagen("/cosas/fireball.png", 250, 100);
 		this.silverLining = cargarImagen("/cosas/silverLining.png", 250, 100);
@@ -60,9 +61,9 @@ public class Juego extends InterfaceJuego {
 		this.fireballRojo = cargarImagen("/cosas/fireballRojo.png", 250, 100);
 		this.silverLiningRojo = cargarImagen("/cosas/silverLiningRojo.png", 250, 120);
 
-		this.hechizoCrystalExplosion = new Hechizo("Crystal Explosion", 30, 100);
-		this.hechizoFireball = new Hechizo("Fireball", 50, 150);
-		this.hechizoSilverLining = new Hechizo("Silver Lining", 0, 60);
+		hechizoCrystalExplosion = new Hechizo("Crystal Explosion", 10, 40);   // Gasta 10, área pequeña
+		hechizoFireball = new Hechizo("Fireball", 50, 100);                  // Gasta 50, área media
+		hechizoSilverLining = new Hechizo("Silver Lining", 100, 9999);       // Gasta 100, mata a todos
 
 		this.gifFireball = Herramientas.cargarImagen("cosas/fireball.gif");
 		this.gifCrystalExplosion = Herramientas.cargarImagen("cosas/crystalExplosion.gif");
@@ -71,8 +72,8 @@ public class Juego extends InterfaceJuego {
 		this.mago = new mago(100, 100);
 		this.murcielagos = new murcielago[10];
 		for (int i = 0; i < murcielagos.length; i++) {
-			double x = 200 + Math.random() * 800;
-			double y = 100 + Math.random() * 600;
+			double x = 50 + Math.random() * (995 - 100); // Máximo x antes del panel
+			double y = 50 + Math.random() * (entorno.alto() - 100); // Considerando márgenes
 			murcielagos[i] = new murcielago(x, y);
 		}
 
@@ -94,6 +95,22 @@ public class Juego extends InterfaceJuego {
 		// --- Dibuja el fondo y el panel de hechizos ---
 		entorno.dibujarImagen(fondo, 500, 400, 0);
 		entorno.dibujarImagen(panelHechizos, 1120, 400, 0);
+		if (estaEnGameOver) {
+		    entorno.dibujarImagen(imagenGameOver, 650, 400, 0); // Centro del entorno
+
+		    Point pos = entorno.getMousePosition();
+		    if (entorno.sePresionoBoton(1) && pos != null) {
+		        int x = pos.x;
+		        int y = pos.y;
+
+		        // Coordenadas del botón "VOLVER A JUGAR" dentro de la imagen:
+		        if (x >= 475 && x <= 825 && y >= 625 && y <= 700) {
+		            reiniciarJuego();
+		            estaEnGameOver = false;
+		        }
+		    }
+		    return; // Salta el resto del tick si estamos en Game Over
+		}
 		// --- Si el mago murio, salimos del tick ---
 		if (mago == null)
 			return;
@@ -104,8 +121,8 @@ public class Juego extends InterfaceJuego {
 
 		// Si está seleccionado, mostrar la versión "Roja"
 		entorno.dibujarImagen("crystalExplosion".equals(hechizoaLanzar) ? crystalExplosionRojo : crystalExplosion, 1120, 200, 0);
-		entorno.dibujarImagen("fireball".equals(hechizoaLanzar) ? fireballRojo : fireball, 1120, 400, 0);
-		entorno.dibujarImagen("silverLining".equals(hechizoaLanzar) ? silverLiningRojo : silverLining, 1120, 600, 0);
+		entorno.dibujarImagen("fireball".equals(hechizoaLanzar) ? fireballRojo : fireball, 1120, 300, 0);
+		entorno.dibujarImagen("silverLining".equals(hechizoaLanzar) ? silverLiningRojo : silverLining, 1120, 400, 0);
 
 		// --- Dibuja al mago ---
 		mago.dibujar(entorno);
@@ -121,7 +138,10 @@ public class Juego extends InterfaceJuego {
 			}
 
 			if (imagen != null && posLanzamiento != null) {
-				entorno.dibujarImagen(imagen, posLanzamiento.x, posLanzamiento.y, 0);
+			    double escala = hechizoActivo.equals("crystalExplosion") ? 0.3 :
+			                    hechizoActivo.equals("fireball") ? 0.7 :
+			                    hechizoActivo.equals("silverLining") ? 5.0 : 1.0;
+			    entorno.dibujarImagen(imagen, posLanzamiento.x, posLanzamiento.y, 0, escala);
 			}
 
 			ticksHechizo--;
@@ -130,15 +150,40 @@ public class Juego extends InterfaceJuego {
 				hechizoActivo = null;
 			}
 		}
+		if (ticksHechizo == 1 && posLanzamiento != null && hechizoActivo != null) {
+		    Hechizo hechizo = null;
+		    if ("crystalExplosion".equals(hechizoActivo)) {
+		        hechizo = hechizoCrystalExplosion;
+		    } else if ("fireball".equals(hechizoActivo)) {
+		        hechizo = hechizoFireball;
+		    } else if ("silverLining".equals(hechizoActivo)) {
+		        hechizo = hechizoSilverLining;
+		    }
+
+		    if (hechizo != null) {
+		        for (int i = 0; i < murcielagos.length; i++) {
+		            murcielago m = murcielagos[i];
+		            if (m != null) {
+		                double dx = m.x - posLanzamiento.x;
+		                double dy = m.y - posLanzamiento.y;
+		                double distancia = Math.sqrt(dx * dx + dy * dy);
+
+		                if (distancia <= hechizo.radioEfecto) {
+		                    murcielagos[i] = null; // Elimina murciélago
+		                }
+		            }
+		        }
+		    }
+		}
 		// Movimiento del Mago
 		if (entorno.estaPresionada(entorno.TECLA_ARRIBA) || entorno.estaPresionada('w')) {
 			mago.mover(-1, 0);
-			if (hayColisionConPiedras(mago) || mago.y <= 20)
+			if (hayColisionConPiedras(mago) || mago.y <= 40)
 				mago.mover(1, 0);
 		}
 		if (entorno.estaPresionada(entorno.TECLA_ABAJO) || entorno.estaPresionada('s')) {
 			mago.mover(1, 0);
-			if (hayColisionConPiedras(mago) || mago.y >= 780)
+			if (hayColisionConPiedras(mago) || mago.y >= 762)
 				mago.mover(-1, 0);
 		}
 		if (entorno.estaPresionada(entorno.TECLA_IZQUIERDA) || entorno.estaPresionada('a')) {
@@ -148,7 +193,7 @@ public class Juego extends InterfaceJuego {
 		}
 		if (entorno.estaPresionada(entorno.TECLA_DERECHA) || entorno.estaPresionada('d')) {
 			mago.mover(0, 1);
-			if (hayColisionConPiedras(mago) || mago.x >= 900)
+			if (hayColisionConPiedras(mago) || mago.x >= 910)
 				mago.mover(0, -1);
 		}
 
@@ -201,8 +246,10 @@ public class Juego extends InterfaceJuego {
 		entorno.cambiarFont("Arial", 24, java.awt.Color.blue);
 		entorno.escribirTexto("Magia: " + energiaMagica, 50, 100);
 		// --- Muerte del mago ---
-		if (mago.vida <= 0)
-			mago = null;
+		if (mago.vida <= 0) {
+		    estaEnGameOver = true;
+		    return;
+		}
 		// --- Movimiento y dibujo de los murcielagos ---
 		for (int i = 0; i < murcielagos.length; i++) {
 			murcielago m = murcielagos[i];
@@ -220,22 +267,18 @@ public class Juego extends InterfaceJuego {
 
 	// AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 	private String seleccionDeHechizo(int x, int y) {
-
-		int xClick = x;
-		int yClick = y;
-		int botonX = 995; // 1120 - 125
+		int botonX = 995; // x mínimo del panel
 		int botonAncho = 250;
 
-		if (xClick >= botonX && xClick <= botonX + botonAncho) {
-			if (yClick >= 125 && yClick <= 275)
+		if (x >= botonX && x <= botonX + botonAncho) {
+			if (y >= 150 && y <= 250) // alrededor de y = 200
 				return "crystalExplosion";
 
-			if (yClick >= 325 && yClick <= 475)
+			if (y >= 250 && y <= 350) // alrededor de y = 300
 				return "fireball";
 
-			if (yClick >= 525 && yClick <= 675)
+			if (y >= 350 && y <= 450) // alrededor de y = 400
 				return "silverLining";
-
 		}
 
 		return null;
@@ -258,6 +301,28 @@ public class Juego extends InterfaceJuego {
 	private boolean MurcielagoTocaMago(mago mago, murcielago murcielago) {
 		double distancia = Math.sqrt(Math.pow(mago.x - murcielago.x, 2) + Math.pow(mago.y - murcielago.y, 2));
 		return distancia < 40;
+	}
+	private void reiniciarJuego() {
+	    this.mago = new mago(100, 100);
+	    this.energiaMagica = 100;
+	    this.hechizoaLanzar = null;
+	    this.hechizoActivo = null;
+	    this.ticksHechizo = 0;
+	    this.posLanzamiento = null;
+
+	    this.murcielagos = new murcielago[10];
+	    for (int i = 0; i < murcielagos.length; i++) {
+	        double x = 50 + Math.random() * (995 - 100);
+	        double y = 50 + Math.random() * (entorno.alto() - 100);
+	        murcielagos[i] = new murcielago(x, y);
+	    }
+
+	    this.piedras = new piedra[4];
+	    int[] coorY = { 200, 500, 300, 600 };
+	    int[] coorX = { 200, 400, 700, 700 };
+	    for (int i = 0; i < piedras.length; i++) {
+	        this.piedras[i] = new piedra(coorX[i], coorY[i]);
+	    }
 	}
 
 	@SuppressWarnings("unused")
